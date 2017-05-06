@@ -28,7 +28,7 @@ class RenameForPlex():
         self.season_re = re.compile(season_pattern)
         number_pattern = r'[0-9]+$'
         self.number_re = re.compile(number_pattern)
-        postfix_pattern = r'(HD)|(CS)$'
+        postfix_pattern = r'(HD)|(CS)|(BSD)$'
         self.postfix_re = re.compile(postfix_pattern)
 
 
