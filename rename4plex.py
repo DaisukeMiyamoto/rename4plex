@@ -91,6 +91,9 @@ class RenameForPlex():
             self.check_case_3_no += 1
             info['basename'] = self.postfix_re.sub('', info['basename'])
             info['title'] = self.number_re.split(info['basename'])[0]
+            if info['title'][-1] == '_':
+                info['title'] = info['title'][:-1]
+
             info['season'] = int(self.check_season(info['title']))
             no_list = self.number_re.findall(info['basename'])
             if len(no_list) == 0 or not no_list[0].isdigit():
