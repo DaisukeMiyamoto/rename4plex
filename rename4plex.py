@@ -88,7 +88,9 @@ class RenameForPlex():
         elif len(splitted_name) == 2:
             # CASE 2
             self.check_case_2_no += 1
-            info['basename'] = self.postfix_re.sub('', info['basename'])
+            if self.postfix_re.match(info['basename']):
+                info['basename'] = self.postfix_re.sub('', info['basename'])
+                info['priority'] += 1
 
             info['title'] = self.number_re.split(info['basename'])[0]
             if info['title'][-1] == '_':
