@@ -65,8 +65,6 @@ class RenameForPlex():
         TITLE%dCS.EXT
         TITLE%02d.EXT
         TITLE%d.EXT
-        :param name: 
-        :return: 
         """
         self.checked_file_no += 1
         info = dict()
