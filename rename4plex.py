@@ -59,8 +59,10 @@ class RenameForPlex():
 
     def _check_name(self, name):
         """name rules
+        Case1:
         TITLE.%d.BROADCAST.DATE.EXT
         TITLE.%02d.BROADCAST.DATE.EXT
+        Case2:
         TITLE%dHD.EXT
         TITLE%dCS.EXT
         TITLE%02d.EXT
