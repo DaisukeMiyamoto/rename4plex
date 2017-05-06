@@ -12,7 +12,7 @@ class RenameForPlex():
 
         self.input_path = input_path
         self.output_path = output_path
-        self.title_list = self.get_title_list(self.input_path)
+        self.title_list = self._get_title_list(self.input_path)
         self.checked_file_no = 0
         self.created_file_no = 0
         self.existed_file_no = 0
@@ -33,17 +33,17 @@ class RenameForPlex():
 
 
     @staticmethod
-    def get_title_list(input_path):
+    def _get_title_list(input_path):
         title_list = os.listdir(input_path)
         return title_list
 
     def run(self):
         for title in self.title_list:
             if os.path.isdir(os.path.join(self.input_path, title)):
-                episode_set = self.make_episode_set(title)
-                self.make_links(title, episode_set)
+                episode_set = self._make_episode_set(title)
+                self._make_links(title, episode_set)
 
-    def broadcast_priority(self, broadcast):
+    def _broadcast_priority(self, broadcast):
         priority = 0
 
         if broadcast in self.broadcast_list:
@@ -51,13 +51,13 @@ class RenameForPlex():
 
         return priority
 
-    def check_season(self, name):
+    def _check_season(self, name):
         if self.season_re.match(name):
             return int(name[-1])
 
         return 1
 
-    def check_name(self, name):
+    def _check_name(self, name):
         """name rules
         TITLE.%d.BROADCAST.DATE.EXT
         TITLE.%02d.BROADCAST.DATE.EXT
@@ -81,20 +81,19 @@ class RenameForPlex():
             # CASE 1
             self.check_case_1_no += 1
             info['title'] = info['basename']
-            info['season'] = self.check_season(info['basename'])
             info['no'] = int(splitted_name[1])
             info['broadcast'] = splitted_name[2]
-            info['priority'] = 10 + self.broadcast_priority(info['broadcast'])
+            info['priority'] = 10 + self._broadcast_priority(info['broadcast'])
 
         elif len(splitted_name) == 2:
-            # CASE 3
-            self.check_case_3_no += 1
+            # CASE 2
+            self.check_case_2_no += 1
             info['basename'] = self.postfix_re.sub('', info['basename'])
+
             info['title'] = self.number_re.split(info['basename'])[0]
             if info['title'][-1] == '_':
                 info['title'] = info['title'][:-1]
 
-            info['season'] = int(self.check_season(info['title']))
             no_list = self.number_re.findall(info['basename'])
             if len(no_list) == 0 or not no_list[0].isdigit():
                 self.check_case_error_no += 1
@@ -102,7 +101,7 @@ class RenameForPlex():
                 return info
             else:
                 info['no'] = int(no_list[0])
-                info['priority'] = 1
+                info['priority'] += 1
 
         else:
             self.check_case_error_no += 1
@@ -110,10 +109,11 @@ class RenameForPlex():
             # print('[%s] is not match' % str(name))
             return info
 
+        info['season'] = int(self._check_season(info['title']))
         info['target'] = '%s_s%02d_e%03d' % (info['title'], info['season'], info['no'])
         return info
 
-    def make_episode_set(self, title):
+    def _make_episode_set(self, title):
         episode_set = dict()
 
         in_path = os.path.join(self.input_path, title)
@@ -121,7 +121,7 @@ class RenameForPlex():
         if self.debug:
             print(episode_list)
         for file_name in episode_list:
-            info = self.check_name(file_name)
+            info = self._check_name(file_name)
             if self.debug:
                 print(info)
             if info['priority'] <= 0:
@@ -135,7 +135,7 @@ class RenameForPlex():
 
         return episode_set
 
-    def make_links(self, title, episode_set):
+    def _make_links(self, title, episode_set):
         input_prefix = os.path.join(self.input_path, title)
         # output_prefix = os.path.join(self.output_path, title)
 
@@ -166,18 +166,17 @@ class RenameForPlex():
         print(' * Created Dirs: %d' % self.created_dir_no)
         print(' * Check Case 1: %d' % self.check_case_1_no)
         print(' * Check Case 2: %d' % self.check_case_2_no)
-        print(' * Check Case 3: %d' % self.check_case_3_no)
         print(' * Check Case Error: %d' % self.check_case_error_no)
 
 
 def main():
-    rfp = RenameForPlex(input_path='/share/backstores/tmp3/anime', output_path='/share/plex', debug=False)
+    rfp = RenameForPlex(input_path='/share/backstores/tmp3/anime', output_path='/share/test_plex', debug=False)
     rfp.run()
     rfp.show_result()
-    rfp = RenameForPlex(input_path='/share/backstores/tmp2/anime', output_path='/share/plex', debug=False)
+    rfp = RenameForPlex(input_path='/share/backstores/tmp2/anime', output_path='/share/test_plex', debug=False)
     rfp.run()
     rfp.show_result()
-    rfp = RenameForPlex(input_path='/share/backstores/tmp1/anime', output_path='/share/plex', debug=False)
+    rfp = RenameForPlex(input_path='/share/backstores/tmp1/anime', output_path='/share/test_plex', debug=False)
     rfp.run()
     rfp.show_result()
 
