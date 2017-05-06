@@ -16,6 +16,7 @@ class RenameForPlex():
         self.checked_file_no = 0
         self.created_file_no = 0
         self.existed_file_no = 0
+        self.created_dir_no = 0
         self.check_case_1_no = 0
         self.check_case_2_no = 0
         self.check_case_3_no = 0
@@ -133,12 +134,17 @@ class RenameForPlex():
 
     def make_links(self, title, episode_set):
         input_prefix = os.path.join(self.input_path, title)
-        output_prefix = os.path.join(self.output_path, title)
-        if not os.path.isdir(output_prefix):
-            os.makedirs(output_prefix)
+        # output_prefix = os.path.join(self.output_path, title)
+
         for k, v in episode_set.items():
             if self.debug:
                 print('%s -> %s' % (k, v['name'], ))
+
+            output_prefix = os.path.join(self.output_path, v['title'])
+            if not os.path.isdir(output_prefix):
+                os.makedirs(output_prefix)
+                self.created_dir_no += 1
+
             input_file_path = os.path.join(input_prefix, v['name'])
             output_file_path = os.path.join(output_prefix, k + '.' + v['ext'])
             if os.path.isfile(output_file_path):
@@ -150,24 +156,25 @@ class RenameForPlex():
     def show_result(self):
         print('\n-----------------------------------------------')
         print(' [%s] -> [%s]' % (self.input_path, self.output_path))
-        print(' * Checked Titles: %d' % (self.checked_title_no))
-        print(' * Checked Files: %d' % (self.checked_file_no))
-        print(' * Created Files: %d' % (self.created_file_no))
-        print(' * Existed Files: %d' % (self.existed_file_no))
-        print(' * Check Case 1: %d' % (self.check_case_1_no))
-        print(' * Check Case 2: %d' % (self.check_case_2_no))
-        print(' * Check Case 3: %d' % (self.check_case_3_no))
-        print(' * Check Case Error: %d' % (self.check_case_error_no))
+        print(' * Checked Titles: %d' % self.checked_title_no)
+        print(' * Checked Files: %d' % self.checked_file_no)
+        print(' * Created Files: %d' % self.created_file_no)
+        print(' * Existed Files: %d' % self.existed_file_no)
+        print(' * Created Dirs: %d' % self.created_dir_no)
+        print(' * Check Case 1: %d' % self.check_case_1_no)
+        print(' * Check Case 2: %d' % self.check_case_2_no)
+        print(' * Check Case 3: %d' % self.check_case_3_no)
+        print(' * Check Case Error: %d' % self.check_case_error_no)
 
 
 def main():
-    rfp = RenameForPlex(input_path='/share/backstores/tmp3/anime', output_path='/share/test3', debug=False)
+    rfp = RenameForPlex(input_path='/share/backstores/tmp3/anime', output_path='/share/plex', debug=False)
     rfp.run()
     rfp.show_result()
-    rfp = RenameForPlex(input_path='/share/backstores/tmp2/anime', output_path='/share/test3', debug=False)
+    rfp = RenameForPlex(input_path='/share/backstores/tmp2/anime', output_path='/share/plex', debug=False)
     rfp.run()
     rfp.show_result()
-    rfp = RenameForPlex(input_path='/share/backstores/tmp1/anime', output_path='/share/test3', debug=False)
+    rfp = RenameForPlex(input_path='/share/backstores/tmp1/anime', output_path='/share/plex', debug=False)
     rfp.run()
     rfp.show_result()
 
