@@ -149,6 +149,7 @@ class RenameForPlex():
 
     def show_result(self):
         print('\n-----------------------------------------------')
+        print(' [%s] -> [%s]' % (self.input_path, self.output_path))
         print(' * Checked Titles: %d' % (self.checked_title_no))
         print(' * Checked Files: %d' % (self.checked_file_no))
         print(' * Created Files: %d' % (self.created_file_no))
